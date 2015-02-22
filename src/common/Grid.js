@@ -229,7 +229,15 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Attaches handlers to DOM
 	bindHandlers: function() {
 		var _this = this;
-
+    /*
+    this.el.on('mouseover', function(ev) {
+      _this.coordMap.build();
+      var startP = _this.coordMap.getCell(ev.pageX, ev.pageY);
+      var endP = _this.coordMap.getCell(ev.pageX, ev.pageY+100);
+      var selectionRange = _this.computeSelection(startP, endP);
+      _this.renderSelection(selectionRange);
+    });
+    */
 		// attach a handler to the grid's root element.
 		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
 		// DOM it automatically unregisters the handlers.
@@ -524,9 +532,14 @@ var Grid = fc.Grid = RowRenderer.extend({
 	headCellHtml: function(cell) {
 		var view = this.view;
 		var date = cell.start;
+    var today = view.calendar.getNow().stripTime();
+    var todayClass = '';
+    if (date.isSame(today, 'day')) {
+      todayClass = 'fc-today';
+    }
 
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + ' ' + todayClass +'">' +
 				htmlEscape(date.format(this.colHeadFormat)) +
 			'</th>';
 	},

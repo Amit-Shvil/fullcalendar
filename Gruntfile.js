@@ -16,6 +16,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-serve');
 	grunt.loadNpmTasks('lumbar');
 	
 	// This will eventually get passed to grunt.initConfig()
@@ -27,6 +28,12 @@ module.exports = function(grunt) {
 		copy: {},
 		compress: {},
 		shell: {},
+    serve: {
+      path: '/demos',
+      options: {
+        port: 9001
+      }
+    },
 		clean: {
 			temp: 'build/temp'
 		}
