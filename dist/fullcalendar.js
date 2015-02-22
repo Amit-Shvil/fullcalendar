@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.7
+ * FullCalendar v2.2.17
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -128,7 +128,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.7" };
+var fc = $.fullCalendar = { version: "2.2.17" };
 var fcViews = fc.views = {};
 
 
@@ -709,6 +709,22 @@ function createObject(proto) {
 function copyOwnProps(src, dest) {
 	for (var name in src) {
 		if (hasOwnProp(src, name)) {
+			dest[name] = src[name];
+		}
+	}
+}
+
+
+// Copies over certain methods with the same names as Object.prototype methods. Overcomes an IE<=8 bug:
+// https://developer.mozilla.org/en-US/docs/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
+function copyNativeMethods(src, dest) {
+	var names = [ 'constructor', 'toString', 'valueOf' ];
+	var i, name;
+
+	for (i = 0; i < names.length; i++) {
+		name = names[i];
+
+		if (src[name] !== Object.prototype[name]) {
 			dest[name] = src[name];
 		}
 	}
@@ -1550,6 +1566,7 @@ Class.extend = function(members) {
 
 	// copy each member variable/method onto the the subclass's prototype
 	copyOwnProps(members, subClass.prototype);
+	copyNativeMethods(members, subClass.prototype); // hack for IE8
 
 	// copy over all class variables/methods to the subclass, such as `extend` and `mixin`
 	copyOwnProps(superClass, subClass);
@@ -2841,7 +2858,15 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Attaches handlers to DOM
 	bindHandlers: function() {
 		var _this = this;
-
+    /*
+    this.el.on('mouseover', function(ev) {
+      _this.coordMap.build();
+      var startP = _this.coordMap.getCell(ev.pageX, ev.pageY);
+      var endP = _this.coordMap.getCell(ev.pageX, ev.pageY+100);
+      var selectionRange = _this.computeSelection(startP, endP);
+      _this.renderSelection(selectionRange);
+    });
+    */
 		// attach a handler to the grid's root element.
 		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
 		// DOM it automatically unregisters the handlers.
@@ -3136,9 +3161,14 @@ var Grid = fc.Grid = RowRenderer.extend({
 	headCellHtml: function(cell) {
 		var view = this.view;
 		var date = cell.start;
+    var today = view.calendar.getNow().stripTime();
+    var todayClass = '';
+    if (date.isSame(today, 'day')) {
+      todayClass = 'fc-today';
+    }
 
 		return '' +
-			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + '">' +
+			'<th class="fc-day-header ' + view.widgetHeaderClass + ' fc-' + dayIDs[date.day()] + ' ' + todayClass +'">' +
 				htmlEscape(date.format(this.colHeadFormat)) +
 			'</th>';
 	},
@@ -3848,6 +3878,7 @@ Grid.mixin({
 
 	// Converts an array of event objects into an array of event segment objects.
 	// A custom `rangeToSegsFunc` may be given for arbitrarily slicing up events.
+	// Doesn't guarantee an order for the resulting array.
 	eventsToSegs: function(events, rangeToSegsFunc) {
 		var eventRanges = this.eventsToRanges(events);
 		var segs = [];
@@ -3868,6 +3899,7 @@ Grid.mixin({
 	// A "range" object is a plain object with start/end properties denoting the time it covers. Also an event property.
 	// For "normal" events, this will be identical to the event's start/end, but for "inverse-background" events,
 	// will create an array of ranges that span the time *not* covered by the given event.
+	// Doesn't guarantee an order for the resulting array.
 	eventsToRanges: function(events) {
 		var _this = this;
 		var eventsById = groupEventsById(events);
@@ -5175,13 +5207,18 @@ DayGrid.mixin({
 		var dayRange = { start: dayStart, end: dayEnd };
 
 		// slice the events with a custom slicing function
-		return this.eventsToSegs(
+		segs = this.eventsToSegs(
 			events,
 			function(range) {
 				var seg = intersectionToSeg(range, dayRange); // undefind if no intersection
 				return seg ? [ seg ] : []; // must return an array of segments
 			}
 		);
+
+		// force an order because eventsToSegs doesn't guarantee one
+		segs.sort(compareSegs);
+
+		return segs;
 	},
 
 

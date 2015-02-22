@@ -1,5 +1,5 @@
 /*!
- * FullCalendar v2.2.16
+ * FullCalendar v2.2.17
  * Docs & License: http://arshaw.com/fullcalendar/
  * (c) 2013 Adam Shaw
  */
@@ -128,7 +128,7 @@ var rtlDefaults = {
 
 ;;
 
-var fc = $.fullCalendar = { version: "2.2.16" };
+var fc = $.fullCalendar = { version: "2.2.17" };
 var fcViews = fc.views = {};
 
 
