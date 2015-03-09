@@ -229,15 +229,39 @@ var Grid = fc.Grid = RowRenderer.extend({
 	// Attaches handlers to DOM
 	bindHandlers: function() {
 		var _this = this;
-    /*
-    this.el.on('mouseover', function(ev) {
-      _this.coordMap.build();
-      var startP = _this.coordMap.getCell(ev.pageX, ev.pageY);
-      var endP = _this.coordMap.getCell(ev.pageX, ev.pageY+100);
-      var selectionRange = _this.computeSelection(startP, endP);
-      _this.renderSelection(selectionRange);
+        var hasOverEffect = this.view.opt('overEffect');
+        var d =  this.view.opt('defaultEventMinutes');
+        this.el.on('mouseover', function(ev) {
+          _this.destroySelection ();
+          if(hasOverEffect)
+          {
+            _this.coordMap.build();
+            var startP = _this.coordMap.getCell(ev.pageX, ev.pageY);
+            window.console.log('startP',startP);
+            if(startP !== null && startP.day !== undefined ) {
+              var endP = {};
+              endP.col = undefined;
+              endP.row = startP.row;
+              endP.start = startP.start.clone();
+              endP.day = startP.day.clone();
+              endP.end = startP.end.clone();
+              endP.grid = startP.grid;
+              endP.end = startP.start.add (d, 'm');
+              var selectionRange = _this.computeSelection (startP, endP);
+              if ( selectionRange !== null ) {
+                _this.renderSelection(selectionRange);
+              }
+          }
+        }
+
+
+      //_this.coordMap.build();
+      //var startP = _this.coordMap.getCell(ev.pageX, ev.pageY);
+      //var endP = _this.coordMap.getCell(ev.pageX, ev.pageY+100);
+      //var selectionRange = _this.computeSelection(startP, endP);
+      //_this.renderSelection(selectionRange);
     });
-    */
+
 		// attach a handler to the grid's root element.
 		// we don't need to clean up in unbindHandlers or destroy, because when jQuery removes the element from the
 		// DOM it automatically unregisters the handlers.

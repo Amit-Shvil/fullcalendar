@@ -18,14 +18,22 @@
 				right: 'month,agendaWeek,agendaDay'
 			},
 			defaultDate: '2015-02-12',
-			businessHours: true, // display business hours
-			editable: true,
+			//businessHours: true, // display business hours
+			editable: false,
 			events: [
 				{
 					title: 'Business Lunch',
 					start: '2015-02-03T13:00:00',
 					constraint: 'businessHours'
 				},
+                /*
+
+                {
+                    title: 'Business Lunch',
+                    start: '2015-02-04T14:00:00',
+                    constraint: 'businessHours'
+
+                },
 				{
 					title: 'Meeting',
 					start: '2015-02-13T11:00:00',
@@ -41,7 +49,7 @@
 					title: 'Party',
 					start: '2015-02-29T20:00:00'
 				},
-
+                 */
 				// areas where "Meeting" must be dropped
 				{
 					id: 'availableForMeeting',
@@ -49,6 +57,7 @@
 					end: '2015-02-11T16:00:00',
 					rendering: 'background'
 				},
+
 				{
 					id: 'availableForMeeting',
 					start: '2015-02-13T10:00:00',
@@ -64,6 +73,27 @@
 					rendering: 'background',
 					color: '#ff9f89'
 				},
+                {
+                    start: '2015-02-13T00:00:00',
+                    end: '2015-02-13T09:00:00',
+                    overlap: false,
+                    rendering: 'background',
+                    color: '#000000'
+                },
+                {
+                    start: '2015-02-13T07:00:00',
+                    end: '2015-02-13T08:00:00',
+                    overlap: false,
+                    rendering: 'background',
+                    color: '#000000'
+                },
+                {
+                    start: '2015-02-13T00:00:00',
+                    end: '2015-02-13T09:00:00',
+                    overlap: false,
+                    rendering: 'background',
+                    color: '#000000'
+                },
 				{
 					start: '2015-02-06',
 					end: '2015-02-08',

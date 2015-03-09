@@ -60,6 +60,7 @@ function Calendar(element, instanceOptions) {
 	t.trigger = trigger;
 	t.isValidViewType = isValidViewType;
 	t.getViewButtonText = getViewButtonText;
+  t.getView = getView;
 
 
 

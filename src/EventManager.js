@@ -969,7 +969,7 @@ function EventManager(options) { // assumed to be a calendar
 		var anyContainment;
 		var i, otherEvent;
 		var otherOverlap;
-
+    //return false;
 		// normalize. fyi, we're normalizing in too many places :(
 		range = {
 			start: range.start.clone().stripZone(),
@@ -1006,8 +1006,9 @@ function EventManager(options) { // assumed to be a calendar
 
 			// there needs to be an actual intersection before disallowing anything
 			if (eventIntersectsRange(otherEvent, range)) {
+        return false;
 
-				// evaluate overlap for the given range and short-circuit if necessary
+        // evaluate overlap for the given range and short-circuit if necessary
 				if (overlap === false) {
 					return false;
 				}
